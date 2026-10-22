@@ -29,10 +29,15 @@ it reads the controller directly, adds rumble, and gives R2 adaptive-trigger fee
 
 The trigger goes slack with the wrench, with gadgets, when a weapon is out of ammo, and in menus.
 
+- **Gadgetron Movement System** (new in 1.1.0, idea by roxas997): a Controller page that lists every connected
+  controller (keyboard, DualSense, other pads), shows which one is active, and can lock the game to one of them.
+- **Button icons** (new in 1.1.0): the game's on-screen button prompts as the PS2's, a PS5's or an Xbox One's, or
+  Auto (follows the controller you last used). The PS5 and Xbox icons are drawn sharp at your screen's resolution.
+
 ## Settings
 
-Everything is in **Options → Port Options**, in both the main menu and the pause menu. Scroll down to the controller
-rows. They are saved with ReRAC's other settings.
+Everything is in **Options → Port Options → Controller**, in both the main menu and the pause menu. It is saved with
+ReRAC's other settings.
 
 | Row | Values |
 |---|---|
@@ -40,22 +45,26 @@ rows. They are saved with ReRAC's other settings.
 | Vibration strength | Low / Medium / High (changing it plays a short test pulse) |
 | Fire button | Circle (the game's default) / R2 |
 | Trigger effects | On / Off (needs Fire button: R2) |
+| Button icons | Original / PS5 / Xbox One / Auto |
 
-**Pause menu:** Options → Port Options
+Below the settings, the page lists the connected controllers as **Active** (last used) or **Available**. Press ✕ on
+one to lock the game to it, and again to unlock.
 
-![The Options page with the Port Options entry](screenshots/options-page.png)
+![The Controller page (Gadgetron Movement System) in the pause menu](screenshots/controller-page.png)
 
-![The controller rows on the Port Options page, from the pause menu](screenshots/port-options-pause-menu.png)
+![Port Options with the Controller entry](screenshots/port-options.png)
 
-**Main menu:** Options → Port Options
+**Button icons:** PS5 and Xbox One
 
-![The controller rows on the Port Options page, from the main menu](screenshots/port-options-main-menu.png)
+![PS5 button icons in the menu hints](screenshots/icons-ps5.png)
+
+![Xbox One button icons in the menu hints](screenshots/icons-xbox.png)
 
 ## Install
 
 Needs **ReRAC 0.3.6** installed by the [ReRAC Launcher](https://github.com/re-rac/rerac-launcher), on Windows x64.
 
-1. Download `ReRAC-DualSense-0.3.6.zip` from [Releases](https://github.com/thrivetoday/dualsense-for-rerac/releases/latest).
+1. Download `ReRAC-DualSense-1.1.0.zip` from [Releases](https://github.com/thrivetoday/dualsense-for-rerac/releases/latest).
 2. Close ReRAC, unzip, and run `install.bat`.
 3. Start ReRAC from the launcher as usual.
 
@@ -86,10 +95,21 @@ of a ReRAC fork.
 - `haptics.rs` turns game state into rumble pulses and picks R2's effect from the weapon in hand. The RYNO's salvo
   and the Blaster's shots come from the game's own firing code.
 - `input_map.rs` merges all controllers and reads R2's travel as fire.
+- `gms.rs` tracks the connected controllers and the lock; the Controller page is in `rc-game`'s `menus/pause/port.rs`.
+- `button_icons.rs` redraws the icon cells in the game's font texture, and for PS5 / Xbox draws each icon as a sharp
+  image over the game's 512×416 2D layer.
 
 To build it yourself, check out ReRAC at v0.3.6, run `git am patch/dualsense-haptics.patch`, and follow ReRAC's
 README.
 
+## Credits
+
+- ReRAC: the [ReRAC contributors](https://github.com/re-rac/rerac).
+- Gadgetron Movement System idea: roxas997 (ReRAC Discord).
+- Button icons: "PS5 Button Icons and Controls" and "Xbox Series Button Icons and Controls" by
+  [Zacksly](https://zacksly.itch.io), licensed under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/).
+  Modified: scaled to the text's size and tinted with its colour in game.
+
 ## License
 
-ISC, like ReRAC. See [LICENSE](LICENSE).
+ISC, like ReRAC. See [LICENSE](LICENSE). The button icons are CC BY 3.0 (see Credits).
