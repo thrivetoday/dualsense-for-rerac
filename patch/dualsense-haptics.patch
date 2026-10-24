@@ -1,7 +1,7 @@
 From f903495d7a529ae49bff1ee0a34a12ac4d6a82d1 Mon Sep 17 00:00:00 2001
 From: thrivetoday <289389247+thrivetoday@users.noreply.github.com>
 Date: Thu, 22 Oct 2026 00:36:18 +0200
-Subject: [PATCH 1/6] DualSense support: native HID input, rumble from game
+Subject: [PATCH 1/7] DualSense support: native HID input, rumble from game
  events, R2 as fire and per-weapon adaptive triggers
 
 A Bluetooth DualSense that Steam or a remapper has switched to its extended report (0x31) gave no input through
@@ -1575,7 +1575,7 @@ index 152b2bc..2bc384d 100644
 From 6c7ddb1fe2cbc49dd59486ddc29239207205c6a3 Mon Sep 17 00:00:00 2001
 From: thrivetoday <289389247+thrivetoday@users.noreply.github.com>
 Date: Thu, 22 Oct 2026 02:19:16 +0200
-Subject: [PATCH 2/6] Gadgetron Movement System: Port Options "Controller" page
+Subject: [PATCH 2/7] Gadgetron Movement System: Port Options "Controller" page
  listing the controllers, a controller lock, and a Veldin HelpDesk note
 
 Idea by roxas997 on the ReRAC Discord: the controllers under the game's own lore name.
@@ -2546,7 +2546,7 @@ index 2bc384d..3ab2d81 100644
 From 6b323a399657daff6c6f25803753620dca9f3194 Mon Sep 17 00:00:00 2001
 From: thrivetoday <289389247+thrivetoday@users.noreply.github.com>
 Date: Thu, 22 Oct 2026 10:55:50 +0200
-Subject: [PATCH 3/6] Controller page holds the controller settings; port pages
+Subject: [PATCH 3/7] Controller page holds the controller settings; port pages
  keep their frames and, in the pause menu, centre the title and stretch the
  list
 
@@ -3068,7 +3068,7 @@ index 67d4674..935e957 100644
 From 5d60cd17ed518792ed6d80112c82744d26b69e55 Mon Sep 17 00:00:00 2001
 From: thrivetoday <289389247+thrivetoday@users.noreply.github.com>
 Date: Thu, 22 Oct 2026 11:30:13 +0200
-Subject: [PATCH 4/6] Button icons: the text's pad icons as the PS2's, a PS5's
+Subject: [PATCH 4/7] Button icons: the text's pad icons as the PS2's, a PS5's
  or an Xbox One's, or Auto by the controller last used
 
 - Controller page row "Button icons" (Original / PS5 / Xbox One / Auto), saved as button_icons.
@@ -3630,7 +3630,7 @@ index 3ab2d81..b92db80 100644
 From edcca8111207808f511c0c19754334e6bf1404b6 Mon Sep 17 00:00:00 2001
 From: thrivetoday <289389247+thrivetoday@users.noreply.github.com>
 Date: Thu, 22 Oct 2026 12:13:02 +0200
-Subject: [PATCH 5/6] Sharp button icons: PS5 and Xbox icons drawn at the
+Subject: [PATCH 5/7] Sharp button icons: PS5 and Xbox icons drawn at the
  window's resolution
 
 With the PS5 or Xbox One style, the pad icons in the HUD's and page menus'
@@ -5265,7 +5265,7 @@ index 9afe0c6..05cc181 100644
 From e03903f1c5facb83346b1a334afa98d6772ebd52 Mon Sep 17 00:00:00 2001
 From: thrivetoday <289389247+thrivetoday@users.noreply.github.com>
 Date: Thu, 22 Oct 2026 12:45:30 +0200
-Subject: [PATCH 6/6] Button icon art: out of the shipped assets folder
+Subject: [PATCH 6/7] Button icon art: out of the shipped assets folder
 
 The PNGs are compiled into the executable (include_bytes!), so they live in
 crates/rc-engine/art/ instead of crates/rc-engine/assets/, which the package
@@ -5450,6 +5450,725 @@ index 05cc181..cee5134 100644
    subtitles keep the rewritten cells.
  * **Gadgetron Movement System** (GMS, idea by roxas997 on the ReRAC Discord): the Controller row does not
    cycle; ✕ opens its own page (`port::GMS_PAGE`, from the main menu `port::GMS_PAGE_FRONT`; Port Options' frames, parent
+-- 
+2.46.2.windows.1
+
+
+From 604fcb55d5a0589e854c0e616f7ace19cb051668 Mon Sep 17 00:00:00 2001
+From: thrivetoday <289389247+thrivetoday@users.noreply.github.com>
+Date: Sat, 24 Oct 2026 20:06:04 +0200
+Subject: [PATCH 7/7] DualSense 1.1.1: focus, GMS note per new game and in the
+ Help Log, Lightbar setting
+
+Fixes from the ReRAC Discord's testing:
+- Pads are read, and rumble and R2's effect sent, only while the game's window has
+  the focus: the DualSense's own HID reports arrived regardless, unlike
+  Windows.Gaming.Input's (input_map::Pads::focused, haptics_frame).
+- The Gadgetron Movement System note shows in every new game's Veldin (level 0
+  loaded with under 5 minutes played), not once ever; a reload after a death does
+  not show it again (gms::Gms::shown_at). Once seen, the Help Log lists it last
+  (PageMenu::gms_in_log), outside the saved log, so saves stay the game's.
+  MenuAssets::msg_in resolves port text ids first, also with the Help Log's
+  all_text swap.
+- Controller page row Lightbar: Default (nothing sent) / Off / Orange / Green /
+  Blue / Health (green to red with Ratchet's health over max_hp), key lightbar;
+  dualsense sends valid flag 1 0x04 and, once, the lightbar setup.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ crates/rc-engine/src/dualsense.rs       | 76 ++++++++++++++++++-------
+ crates/rc-engine/src/gms.rs             | 60 +++++++++++++------
+ crates/rc-engine/src/haptics.rs         | 71 +++++++++++++++++++++--
+ crates/rc-engine/src/input_map.rs       |  7 +++
+ crates/rc-engine/src/menu_render.rs     |  7 ++-
+ crates/rc-game/src/menus/mod.rs         |  1 +
+ crates/rc-game/src/menus/pause.rs       | 10 +++-
+ crates/rc-game/src/menus/pause/pages.rs |  2 +
+ crates/rc-game/src/menus/pause/port.rs  | 25 +++++++-
+ crates/rc-game/src/menus/pause/tests.rs | 16 +++++-
+ docs/plan/menus.md                      | 10 +++-
+ 11 files changed, 238 insertions(+), 47 deletions(-)
+
+diff --git a/crates/rc-engine/src/dualsense.rs b/crates/rc-engine/src/dualsense.rs
+index 216751f..a90796b 100644
+--- a/crates/rc-engine/src/dualsense.rs
++++ b/crates/rc-engine/src/dualsense.rs
+@@ -10,7 +10,8 @@
+ //! [`DualSense::set_trigger`]): the reader thread sends the pad's output report (USB 0x02, Bluetooth 0x31 with its
+ //! CRC-32) whenever they change, through a second handle so a blocked read never holds a write up. The report sets the
+ //! two "compatible vibration" motors (valid flags 0x01 | 0x02) and the right trigger's effect (0x04, [`Trigger`]); the
+-//! lightbar, LEDs and the left trigger are left alone. Dropping [`RumbleStop`] (the app's end) stops the motors and
++//! lightbar only when the player picks a colour (crate::haptics::Lightbar: valid flag 1 0x04, its setup once), the
++//! LEDs and the left trigger never. Dropping [`RumbleStop`] (the app's end) stops the motors and
+ //! frees the trigger.
+ //!
+ //! A thread per process scans for a pad every second, then reads its reports into [`DualSense`] until it disconnects.
+@@ -82,6 +83,8 @@ struct Shared {
+     rumble: AtomicU16,
+     /// The wanted effect on R2.
+     trigger: Mutex<Trigger>,
++    /// The wanted lightbar colour, `None`: the pad's own.
++    lightbar: Mutex<Option<Rgb>>,
+     #[cfg(windows)]
+     out: Mutex<Option<hid::Output>>,
+ }
+@@ -98,8 +101,14 @@ impl DualSense {
+ 
+     /// The effect R2 should have.
+     pub fn set_trigger(&self, t: Trigger) { *self.0.trigger.lock().unwrap_or_else(|e| e.into_inner()) = t; }
++
++    /// The lightbar's colour, `None` to leave it to the pad (once set, it keeps the last colour until turned off).
++    pub fn set_lightbar(&self, c: Option<Rgb>) { *self.0.lightbar.lock().unwrap_or_else(|e| e.into_inner()) = c; }
+ }
+ 
++/// A lightbar colour.
++pub type Rgb = [u8; 3];
++
+ /// Stops the motors and frees R2 when the app ends (its resources drop after `App::run`).
+ #[derive(Resource)]
+ pub struct RumbleStop(DualSense);
+@@ -109,7 +118,7 @@ impl Drop for RumbleStop {
+         self.0.set_rumble(0, 0);
+         self.0.set_trigger(Trigger::OFF);
+         #[cfg(windows)]
+-        if let Some(o) = self.0 .0.out.lock().unwrap_or_else(|e| e.into_inner()).as_mut() { o.send(0, 0, Trigger::OFF); }
++        if let Some(o) = self.0 .0.out.lock().unwrap_or_else(|e| e.into_inner()).as_mut() { o.send(0, 0, Trigger::OFF, None); }
+     }
+ }
+ 
+@@ -199,8 +208,11 @@ pub fn parse(report: &[u8], bluetooth: bool) -> Option<PadDevice> {
+ /// length too short for the DualSense's (USB 0x02: 48, Bluetooth 0x31: 78). Windows wants every write as long as the
+ /// pad's longest output report (over Bluetooth 547 bytes, report 0x39), so the report is padded with zeros to `len`,
+ /// as hidapi does. The common part (hid-playstation.c `dualsense_output_report_common`, SDL's `DS5EffectsState_t`):
+-/// valid flags 0 / 1, the right (light) and left (heavy) motors, then at +10 the right trigger's effect.
+-pub fn output_report(len: usize, bluetooth: bool, seq: u8, heavy: u8, light: u8, trigger: Trigger) -> Option<Vec<u8>> {
++/// valid flags 0 / 1, the right (light) and left (heavy) motors, then at +10 the right trigger's effect; with a
++/// `lightbar` colour, valid flag 1 0x04 and the colour at +44, and with `setup` also valid flag 2 (+38) 0x02 and the
++/// lightbar setup (+41) 0x02, which ends the pad's own lightbar animation (hid-playstation sends it once).
++#[allow(clippy::too_many_arguments)]
++pub fn output_report(len: usize, bluetooth: bool, seq: u8, heavy: u8, light: u8, trigger: Trigger, lightbar: Option<Rgb>, setup: bool) -> Option<Vec<u8>> {
+     let mut r = vec![0u8; len];
+     let common = if bluetooth {
+         if len < 78 { return None; }
+@@ -219,6 +231,14 @@ pub fn output_report(len: usize, bluetooth: bool, seq: u8, heavy: u8, light: u8,
+     r[common + 2] = light;
+     r[common + 3] = heavy;
+     r[common + 10..common + 21].copy_from_slice(&trigger.0);
++    if let Some(c) = lightbar {
++        r[common + 1] |= 0x04;
++        r[common + 44..common + 47].copy_from_slice(&c);
++        if setup {
++            r[common + 38] |= 0x02;
++            r[common + 41] = 0x02;
++        }
++    }
+     if bluetooth {
+         // CRC-32 over the Bluetooth output header byte 0xa2 and the report, little-endian in the last four bytes.
+         let crc = crc32(&[&[0xa2], &r[..74]]);
+@@ -250,7 +270,7 @@ mod hid {
+     use std::sync::Arc;
+     use std::time::{Duration, Instant};
+ 
+-    use super::{output_report, parse, Shared, Trigger, PRODUCTS, VENDOR};
++    use super::{output_report, parse, Rgb, Shared, Trigger, PRODUCTS, VENDOR};
+ 
+     #[repr(C)]
+     #[derive(Default)]
+@@ -330,14 +350,19 @@ mod hid {
+         len: usize,
+         bluetooth: bool,
+         seq: u8,
++        /// The lightbar setup was sent.
++        lit: bool,
+     }
+ 
+     impl Output {
+-        /// Sends the motor strengths and R2's effect; false when the write fails (the pad is gone).
+-        pub fn send(&mut self, heavy: u8, light: u8, trigger: Trigger) -> bool {
+-            let Some(r) = output_report(self.len, self.bluetooth, self.seq, heavy, light, trigger) else { return false };
++        /// Sends the motor strengths, R2's effect and the lightbar; false when the write fails (the pad is gone).
++        pub fn send(&mut self, heavy: u8, light: u8, trigger: Trigger, lightbar: Option<Rgb>) -> bool {
++            let setup = lightbar.is_some() && !self.lit;
++            let Some(r) = output_report(self.len, self.bluetooth, self.seq, heavy, light, trigger, lightbar, setup) else { return false };
+             self.seq = (self.seq + 1) & 0xf;
+-            self.file.write_all(&r).is_ok()
++            let ok = self.file.write_all(&r).is_ok();
++            if ok && setup { self.lit = true; }
++            ok
+         }
+     }
+ 
+@@ -382,12 +407,12 @@ mod hid {
+                 continue;
+             };
+             println!("dualsense: connected over {}", if pad.bluetooth { "Bluetooth" } else { "USB" });
+-            set_out(open_file(&path).map(|file| Output { file, len: pad.output_len, bluetooth: pad.bluetooth, seq: 0 }));
++            set_out(open_file(&path).map(|file| Output { file, len: pad.output_len, bluetooth: pad.bluetooth, seq: 0, lit: false }));
+             // The rumble and trigger effect last sent and when: a running motor is sent again every second, in case a write
+             // was lost. Nothing is sent before the first rumble or effect: over Bluetooth an output report switches the pad
+             // to its extended reports, which other programs reading it through Windows.Gaming.Input then miss until it is
+             // turned off and on.
+-            let mut sent = (0u16, Trigger::OFF, Instant::now());
++            let mut sent = (0u16, Trigger::OFF, None, Instant::now());
+             let mut warned = false;
+             let mut buf = vec![0u8; pad.input_len.max(1)];
+             let mut reported = false;
+@@ -402,14 +427,15 @@ mod hid {
+                 set(Some(state));
+                 let want = shared.rumble.load(Ordering::Relaxed);
+                 let trigger = *shared.trigger.lock().unwrap_or_else(|e| e.into_inner());
+-                if want != sent.0 || trigger != sent.1 || (want != 0 && sent.2.elapsed() > Duration::from_secs(1)) {
++                let lightbar = *shared.lightbar.lock().unwrap_or_else(|e| e.into_inner());
++                if want != sent.0 || trigger != sent.1 || lightbar != sent.2 || (want != 0 && sent.3.elapsed() > Duration::from_secs(1)) {
+                     let [heavy, light] = want.to_be_bytes();
+-                    let ok = shared.out.lock().unwrap_or_else(|e| e.into_inner()).as_mut().is_some_and(|o| o.send(heavy, light, trigger));
++                    let ok = shared.out.lock().unwrap_or_else(|e| e.into_inner()).as_mut().is_some_and(|o| o.send(heavy, light, trigger, lightbar));
+                     if !ok && !warned {
+                         println!("dualsense: rumble not sent (output report length {})", pad.output_len);
+                         warned = true;
+                     }
+-                    sent = (want, trigger, Instant::now());
++                    sent = (want, trigger, lightbar, Instant::now());
+                 }
+             }
+             set(None);
+@@ -449,17 +475,29 @@ mod tests {
+     #[test]
+     fn rumble_reports() {
+         assert_eq!(crc32(&[b"123456789"]), 0xcbf4_3926);
+-        let usb = output_report(48, false, 0, 200, 100, Trigger::OFF).unwrap();
++        let usb = output_report(48, false, 0, 200, 100, Trigger::OFF, None, false).unwrap();
+         assert_eq!((usb[0], usb[1], usb[3], usb[4], usb[11]), (0x02, 0x07, 100, 200, 0x05));
+-        let bt = output_report(78, true, 5, 255, 0, Trigger::weapon(3, 6, 8)).unwrap();
++        let bt = output_report(78, true, 5, 255, 0, Trigger::weapon(3, 6, 8), None, false).unwrap();
+         assert_eq!(&bt[..7], &[0x31, 0x50, 0x10, 0x07, 0x00, 0, 255]);
+         assert_eq!(&bt[13..17], &[0x25, 0x48, 0x00, 7]);
+         assert_eq!(u32::from_le_bytes(bt[74..].try_into().unwrap()), crc32(&[&[0xa2], &bt[..74]]));
+         // Padded to the pad's longest output report, the CRC still over the first 74 bytes.
+-        let long = output_report(547, true, 5, 255, 0, Trigger::weapon(3, 6, 8)).unwrap();
++        let long = output_report(547, true, 5, 255, 0, Trigger::weapon(3, 6, 8), None, false).unwrap();
+         assert_eq!((long.len(), &long[..78], long[78..].iter().all(|&b| b == 0)), (547, &bt[..], true));
+-        assert_eq!(output_report(64, true, 0, 1, 1, Trigger::OFF), None);
+-        assert_eq!(output_report(40, false, 0, 1, 1, Trigger::OFF), None);
++        assert_eq!(output_report(64, true, 0, 1, 1, Trigger::OFF, None, false), None);
++        assert_eq!(output_report(40, false, 0, 1, 1, Trigger::OFF, None, false), None);
++    }
++
++    #[test]
++    fn lightbar_report() {
++        // Over USB the common part starts at 1: valid flag 1 at 2, the colour at 45..48; the setup at 39 / 42.
++        let usb = output_report(48, false, 0, 0, 0, Trigger::OFF, Some([255, 96, 0]), true).unwrap();
++        assert_eq!((usb[1], usb[2], usb[39], usb[42], &usb[45..48]), (0x07, 0x04, 0x02, 0x02, &[255, 96, 0][..]));
++        let again = output_report(48, false, 0, 0, 0, Trigger::OFF, Some([0, 0, 0]), false).unwrap();
++        assert_eq!((again[2], again[39], again[42]), (0x04, 0, 0));
++        // No colour: the lightbar is left to the pad.
++        let none = output_report(78, true, 0, 0, 0, Trigger::OFF, None, true).unwrap();
++        assert_eq!((none[4], none[41], none[44]), (0, 0, 0));
+     }
+ 
+     #[test]
+diff --git a/crates/rc-engine/src/gms.rs b/crates/rc-engine/src/gms.rs
+index d7fa0a0..9a2e20a 100644
+--- a/crates/rc-engine/src/gms.rs
++++ b/crates/rc-engine/src/gms.rs
+@@ -11,25 +11,27 @@
+ //! of them. While the locked device is unplugged the lock does not apply, so the game never ends up without input. The
+ //! lock lasts for the run (devices are not identified across runs).
+ //!
+-//! **The HelpDesk note** ([`HELP_TEXT`]): on Veldin (level 0) the help box shows once what the Gadgetron Movement
+-//! System is and where its options are, as a text-only message (no voice: the game's lines are recordings) added to the
+-//! level text under [`HELP_MESSAGE`] and requested without a help record (`rc_game::help::Help::request_port`). It
+-//! counts as shown once the box displays it; the port settings file keeps `gms_help = shown`.
++//! **The HelpDesk note** (`port::text::GMS_HELP_TEXT`): in a new game on Veldin (level 0 loaded with under
++//! [`NEW_GAME_PLAY_TIME`] played) the help box shows what the Gadgetron Movement System is and where its options are,
++//! as a text-only message (no voice: the game's lines are recordings) added to the level text under [`HELP_MESSAGE`]
++//! and requested without a help record (`rc_game::help::Help::request_port`), so nothing of it enters the save; a
++//! reload after a death plays on from the play time it showed at ([`Gms::shown_at`]) and does not show it again. Once
++//! it has shown, the Help Log lists it too (`PageMenu::gms_in_log`, never in the saved log); the port settings file
++//! keeps `gms_help = shown` for that.
+ 
+ use bevy::input::mouse::AccumulatedMouseMotion;
+ use bevy::prelude::*;
+ use rc_game::menus::pause::port::{gms_status, GmsRow};
+ 
+ use crate::dualsense::DualSense;
+-use crate::gameplay::Play;
++use crate::gameplay::{Persistent, Play};
+ 
+ /// The note's id in the level text (positive, as the help box takes only those; past the disc's ids 0..=21500).
+ pub const HELP_MESSAGE: i32 = 0x7f00_0001;
+-/// The note (roxas997's words, from the ReRAC Discord).
+-pub const HELP_TEXT: &[u8] = b"The Gadgetron Movement System is what is used to move Ratchet and Clank on their intergalactic adventure. \
+-If you like, you may change your options on the Port Options screen.";
+ /// Game ticks into Veldin before the note may show (past the arrival's own help).
+ const HELP_AFTER_TICKS: u64 = 600;
++/// A Veldin load with less play time than this (the save's play time, game ticks: 5 minutes) is a new game.
++pub const NEW_GAME_PLAY_TIME: i32 = 5 * 60 * 60;
+ /// `RC_GMS_TRACE=1`: the note's conditions every 120 ticks.
+ static TRACE: std::sync::LazyLock<bool> = std::sync::LazyLock::new(|| std::env::var("RC_GMS_TRACE").is_ok_and(|v| v.trim() == "1"));
+ /// The longest device name shown (the row's status needs the rest of the width).
+@@ -51,7 +53,17 @@ pub struct Gms {
+     pub devices: Vec<(DeviceKey, Vec<u8>)>,
+     pub active: Option<DeviceKey>,
+     pub lock: Option<DeviceKey>,
+-    pub help_shown: bool,
++    /// The note has shown at least once: the Help Log lists it.
++    pub in_log: bool,
++    /// The note waits to show in this level (a new game's Veldin).
++    pub help_due: bool,
++    /// The game tick last seen: a lower one is a new level load.
++    pub seen_counter: Option<u64>,
++    /// The save's play time when the note last showed: a death's reload plays on from it (no note again), a new game
++    /// starts below it.
++    pub shown_at: Option<i32>,
++    /// No note at all (deterministic runs).
++    pub help_off: bool,
+ }
+ 
+ impl Gms {
+@@ -142,18 +154,32 @@ pub fn keyboard<'a>(
+ /// The note in the level text (crate::gameplay's help setup).
+ pub fn add_help_message(messages: &mut Vec<rc_formats::strings::Message>) {
+     if messages.iter().any(|m| m.id == HELP_MESSAGE) { return; }
+-    messages.push(rc_formats::strings::Message { id: HELP_MESSAGE, text: HELP_TEXT.to_vec(), help_audio: -1 });
++    messages.push(rc_formats::strings::Message { id: HELP_MESSAGE, text: rc_game::menus::pause::port::text::GMS_HELP_TEXT.to_vec(), help_audio: -1 });
+ }
+ 
+-/// On Veldin, once: request the note while the help box is free and enabled, and mark it shown once the box shows it.
+-fn help_note(mut gms: ResMut<Gms>, play: Option<ResMut<Play>>, mode: Option<Res<crate::menu_render::MenuMode>>) {
+-    if gms.help_shown { return; }
++/// A new game's Veldin: request the note while the help box is free and enabled; once the box shows it, it is done
++/// for this level and listed in the Help Log from then on.
++fn help_note(mut gms: ResMut<Gms>, play: Option<ResMut<Play>>, gs: Option<Res<Persistent>>, mode: Option<Res<crate::menu_render::MenuMode>>) {
++    if gms.help_off { return; }
+     let Some(mut play) = play else { return };
++    // A level load (the tick count starts again): due on a new game's Veldin.
++    let counter = play.game.counter;
++    let play_time = gs.as_ref().map_or(i32::MAX, |g| g.0.global.play_time);
++    if gms.seen_counter.is_none_or(|c| counter < c) {
++        gms.help_due = play.svc.level == 0 && play_time < NEW_GAME_PLAY_TIME && gms.shown_at.is_none_or(|t| play_time < t);
++        if *TRACE { println!("gms: level {} loaded, play time {play_time}: note due {}", play.svc.level, gms.help_due); }
++    }
++    gms.seen_counter = Some(counter);
++    if !gms.help_due { return; }
+     let help = &mut play.svc.help;
+     let shown = help.bx.state != 0 && help.bx.index.and_then(|i| help.text.messages.get(i)).is_some_and(|m| m.id == HELP_MESSAGE);
+     if shown {
+-        gms.help_shown = true;
+-        crate::render_settings::save_key("gms_help", "shown");
++        gms.help_due = false;
++        gms.shown_at = Some(play_time);
++        if !gms.in_log {
++            gms.in_log = true;
++            crate::render_settings::save_key("gms_help", "shown");
++        }
+         println!("gms: the HelpDesk note shown");
+         return;
+     }
+@@ -174,8 +200,8 @@ pub struct GmsPlugin;
+ 
+ impl Plugin for GmsPlugin {
+     fn build(&self, app: &mut App) {
+-        let help_shown = crate::render_settings::load_key("gms_help").is_some_and(|v| v.trim() == "shown") || crate::determinism::deterministic();
+-        app.insert_resource(Gms { help_shown, ..default() })
++        let in_log = crate::render_settings::load_key("gms_help").is_some_and(|v| v.trim() == "shown");
++        app.insert_resource(Gms { in_log, help_off: crate::determinism::deterministic(), ..default() })
+             .add_systems(PreUpdate, track.after(bevy::input::InputSystems).before(crate::input_map::sample_system))
+             .add_systems(Update, help_note);
+     }
+diff --git a/crates/rc-engine/src/haptics.rs b/crates/rc-engine/src/haptics.rs
+index 5382acc..4a7d607 100644
+--- a/crates/rc-engine/src/haptics.rs
++++ b/crates/rc-engine/src/haptics.rs
+@@ -35,6 +35,46 @@ use bevy::prelude::*;
+ use crate::dualsense::{DualSense, Trigger};
+ use crate::gameplay::{Persistent, Play};
+ 
++/// The DualSense lightbar, as the Controller page row's values.
++#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
++pub enum Lightbar {
++    /// Left to the pad (and to Steam or DualSenseX): nothing is sent.
++    #[default]
++    Default,
++    Off,
++    /// Ratchet's orange.
++    Orange,
++    /// Clank's green.
++    Green,
++    Blue,
++    /// Ratchet's health: green when full, through yellow, to red.
++    Health,
++}
++
++impl Lightbar {
++    pub const ALL: [Lightbar; 6] = [Lightbar::Default, Lightbar::Off, Lightbar::Orange, Lightbar::Green, Lightbar::Blue, Lightbar::Health];
++    const KEYS: [&'static str; 6] = ["default", "off", "orange", "green", "blue", "health"];
++
++    pub fn index(self) -> u8 { Self::ALL.iter().position(|&s| s == self).unwrap_or(0) as u8 }
++    pub fn from_index(i: u8) -> Lightbar { Self::ALL.get(i as usize).copied().unwrap_or_default() }
++    fn key(self) -> &'static str { Self::KEYS[self.index() as usize] }
++
++    /// The colour to send: `health` is Ratchet's health over his max (`None` outside a level: full).
++    pub fn colour(self, health: Option<f32>) -> Option<crate::dualsense::Rgb> {
++        Some(match self {
++            Lightbar::Default => return None,
++            Lightbar::Off => [0, 0, 0],
++            Lightbar::Orange => [255, 80, 0],
++            Lightbar::Green => [0, 255, 40],
++            Lightbar::Blue => [0, 60, 255],
++            Lightbar::Health => {
++                let f = health.unwrap_or(1.0).clamp(0.0, 1.0);
++                [((2.0 * (1.0 - f)).min(1.0) * 255.0).round() as u8, ((2.0 * f).min(1.0) * 255.0).round() as u8, 0]
++            }
++        })
++    }
++}
++
+ /// How strongly the motors run, as the Port Options row's values.
+ #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+ pub enum Strength {
+@@ -73,6 +113,8 @@ pub struct ControllerSettings {
+     pub triggers: bool,
+     /// The button icons in text (crate::button_icons).
+     pub icons: crate::button_icons::IconStyle,
++    /// The DualSense lightbar.
++    pub lightbar: Lightbar,
+ }
+ 
+ impl ControllerSettings {
+@@ -88,7 +130,8 @@ impl ControllerSettings {
+         let fire_r2 = key("fire_button").is_some_and(|v| v == "r2");
+         let triggers = key("trigger_effects").is_none_or(|v| v != "off");
+         let icons = key("button_icons").and_then(|v| crate::button_icons::IconStyle::from_key(&v)).unwrap_or_default();
+-        ControllerSettings { enabled, strength, fire_r2, triggers, icons }
++        let lightbar = key("lightbar").and_then(|v| Lightbar::KEYS.iter().position(|k| *k == v)).map_or(Lightbar::Default, |i| Lightbar::ALL[i]);
++        ControllerSettings { enabled, strength, fire_r2, triggers, icons, lightbar }
+     }
+ 
+     /// Writes the settings into the port settings file.
+@@ -99,6 +142,7 @@ impl ControllerSettings {
+         crate::render_settings::save_key("fire_button", if self.fire_r2 { "r2" } else { "circle" });
+         crate::render_settings::save_key("trigger_effects", on(self.triggers));
+         crate::render_settings::save_key("button_icons", self.icons.key());
++        crate::render_settings::save_key("lightbar", self.lightbar.key());
+     }
+ }
+ 
+@@ -321,8 +365,10 @@ pub fn weapon_feel(item: i32) -> Option<Feel> {
+     })
+ }
+ 
+-/// Each frame: the new ticks' events, then the motors (off while no tick runs, unless a settings preview plays) and
+-/// R2's effect.
++/// Each frame: the new ticks' events, then the motors (off while no tick runs, unless a settings preview plays),
++/// R2's effect and the lightbar. While the game's window is not focused the motors and R2 are off, as its input is
++/// (crate::input_map::Pads).
++#[allow(clippy::too_many_arguments)]
+ fn haptics_frame(
+     mut h: Local<Haptics>,
+     settings: Res<ControllerSettings>,
+@@ -331,8 +377,10 @@ fn haptics_frame(
+     gs: Option<Res<Persistent>>,
+     mode: Option<Res<crate::menu_render::MenuMode>>,
+     mut fire: ResMut<FirePoint>,
++    windows: Query<&Window, With<bevy::window::PrimaryWindow>>,
+ ) {
+     let Some(pad) = pad else { return };
++    let focused = windows.iter().next().is_none_or(|w| w.focused);
+     let vib = |s: &ControllerSettings| (s.enabled, s.strength);
+     if h.settings.is_some_and(|s| vib(&s) != vib(&settings)) && settings.enabled { h.preview = PREVIEW_FRAMES; }
+     h.settings = Some(*settings);
+@@ -408,14 +456,16 @@ fn haptics_frame(
+         h.preview -= 1;
+         let f = h.preview as f32 / PREVIEW_FRAMES as f32;
+         (0.9 * f, 0.6 * f)
+-    } else if !settings.enabled || !ticking {
++    } else if !settings.enabled || !ticking || !focused {
+         (0.0, 0.0)
+     } else {
+         let (ph, pl) = h.pulse.level();
+         (ph.max(long_shake), pl.max(long_shake * 0.5))
+     };
+     pad.set_rumble(motor(heavy, scale), motor(light, scale));
+-    pad.set_trigger(trigger);
++    pad.set_trigger(if focused { trigger } else { Trigger::OFF });
++    let health = play.as_ref().zip(gs.as_ref()).map(|(p, g)| p.game.hero.health as f32 / g.0.global.max_hp.max(1) as f32);
++    pad.set_lightbar(settings.lightbar.colour(health));
+     if fire.0 != point { fire.0 = point; }
+ }
+ 
+@@ -431,6 +481,7 @@ impl Plugin for HapticsPlugin {
+             if s.fire_r2 { "R2" } else { "circle" },
+             if s.triggers { "on" } else { "off" }
+         );
++        println!("haptics: lightbar {:?}", s.lightbar);
+         app.insert_resource(s).init_resource::<FirePoint>().add_systems(PostUpdate, haptics_frame);
+     }
+ }
+@@ -505,6 +556,16 @@ mod tests {
+         assert_eq!(p.level(), (0.0, 0.0));
+     }
+ 
++    #[test]
++    fn lightbar_colours() {
++        assert_eq!(Lightbar::Default.colour(Some(0.5)), None);
++        assert_eq!(Lightbar::Health.colour(Some(1.0)), Some([0, 255, 0]));
++        assert_eq!(Lightbar::Health.colour(Some(0.5)), Some([255, 255, 0]));
++        assert_eq!(Lightbar::Health.colour(Some(0.0)), Some([255, 0, 0]));
++        assert_eq!(Lightbar::Health.colour(None), Some([0, 255, 0]));
++        for l in Lightbar::ALL { assert_eq!(Lightbar::from_index(l.index()), l); }
++    }
++
+     #[test]
+     fn strengths_and_triggers() {
+         assert_eq!(motor(1.0, Strength::High.scale()), 255);
+diff --git a/crates/rc-engine/src/input_map.rs b/crates/rc-engine/src/input_map.rs
+index bd8de7d..8fdde90 100644
+--- a/crates/rc-engine/src/input_map.rs
++++ b/crates/rc-engine/src/input_map.rs
+@@ -118,16 +118,23 @@ pub struct Pads<'w, 's> {
+     fire_point: Option<Res<'w, crate::haptics::FirePoint>>,
+     /// The Gadgetron Movement System's lock (crate::gms): only the locked device counts.
+     gms: Option<Res<'w, crate::gms::Gms>>,
++    /// The game's window: pads are read only while it has the focus (the DualSense's own reports arrive regardless,
++    /// unlike Windows.Gaming.Input's).
++    windows: Query<'w, 's, &'static Window, With<bevy::window::PrimaryWindow>>,
+ }
+ 
+ impl Pads<'_, '_> {
+     /// All pads as one, `None` without any.
+     pub fn device(&self) -> Option<PadDevice> {
++        if !self.focused() { return None; }
+         let pad = self.merged()?;
+         let point = self.fire_point.as_ref().map_or(0.0, |p| p.0);
+         Some(if self.controller.as_ref().is_some_and(|c| c.fire_r2) { pad.fire_on_r2(point) } else { pad })
+     }
+ 
++    /// The game's window has the focus (or there is none).
++    pub fn focused(&self) -> bool { self.windows.iter().next().is_none_or(|w| w.focused) }
++
+     /// The GMS lock, for the keyboard (crate::gms::keyboard).
+     pub fn gms(&self) -> Option<&crate::gms::Gms> { self.gms.as_deref() }
+ 
+diff --git a/crates/rc-engine/src/menu_render.rs b/crates/rc-engine/src/menu_render.rs
+index da97e3c..6a5dba9 100644
+--- a/crates/rc-engine/src/menu_render.rs
++++ b/crates/rc-engine/src/menu_render.rs
+@@ -566,13 +566,17 @@ fn port_rows_in(
+ ) {
+     if let Some(s) = shadows { menu.set_port_value(Setting::Shadows, !s.enabled as u8); }
+     // The Gadgetron Movement System page's rows: the connected controllers (crate::gms).
+-    if let Some(g) = gms { menu.set_gms_rows(g.rows()); }
++    if let Some(g) = gms {
++        menu.set_gms_rows(g.rows());
++        menu.gms_in_log = g.in_log;
++    }
+     if let Some(h) = haptics {
+         menu.set_port_value(Setting::Vibration, !h.enabled as u8);
+         menu.set_port_value(Setting::VibrationStrength, h.strength.index());
+         menu.set_port_value(Setting::FireButton, h.fire_r2 as u8);
+         menu.set_port_value(Setting::TriggerEffects, !h.triggers as u8);
+         menu.set_port_value(Setting::ButtonIcons, h.icons.index());
++        menu.set_port_value(Setting::Lightbar, h.lightbar.index());
+     }
+     menu.set_port_value(Setting::Resolution, display.resolution.index());
+     menu.set_port_value(Setting::Aspect, display.aspect.index());
+@@ -602,6 +606,7 @@ fn port_rows_out(
+             fire_r2: menu.port_value(Setting::FireButton).map_or(h.fire_r2, |v| v == 1),
+             triggers: menu.port_value(Setting::TriggerEffects).map_or(h.triggers, |v| v == 0),
+             icons: menu.port_value(Setting::ButtonIcons).map_or(h.icons, crate::button_icons::IconStyle::from_index),
++            lightbar: menu.port_value(Setting::Lightbar).map_or(h.lightbar, crate::haptics::Lightbar::from_index),
+         };
+         if *h != want {
+             *h = want;
+diff --git a/crates/rc-game/src/menus/mod.rs b/crates/rc-game/src/menus/mod.rs
+index e65cea1..25cc568 100644
+--- a/crates/rc-game/src/menus/mod.rs
++++ b/crates/rc-game/src/menus/mod.rs
+@@ -262,6 +262,7 @@ impl MenuAssets {
+     pub fn new(hud: HudAssets, overlay: Overlay) -> MenuAssets { MenuAssets { hud, overlay, all_text: Vec::new() } }
+     /// `msg_string__Fi(id)` with the message table swapped to `all_text` (`MenuTextLoad`) when `swapped`.
+     pub fn msg_in(&self, id: i32, swapped: bool) -> &[u8] {
++        if let Some(t) = pause::port::text::get(id) { return t; }
+         if swapped && !self.all_text.is_empty() { strings::lookup(&self.all_text, id) } else { self.msg(id) }
+     }
+     /// `msg_string__Fi(id)`; the port's own text ids ([`pause::port::text`], negative, never on the disc)
+diff --git a/crates/rc-game/src/menus/pause.rs b/crates/rc-game/src/menus/pause.rs
+index 3c20527..10533e9 100644
+--- a/crates/rc-game/src/menus/pause.rs
++++ b/crates/rc-game/src/menus/pause.rs
+@@ -543,6 +543,9 @@ pub struct PageMenu {
+     pub movie_lists: Vec<Vec<Item>>,
+     /// The help log's id table 0x1798d0 (`crate::help`), read at load.
+     pub log_ids: Vec<(i16, i16)>,
++    /// **Port-only**: the Help Log lists the Gadgetron Movement System note (rc-engine's gms sets it once the note was
++    /// shown). The entry is the list's oldest and never enters the saved log, so a save stays the game's.
++    pub gms_in_log: bool,
+     /// 0x15ed88: the language (the Controls page's pictures, the Items page's German hyphen).
+     pub lang: u32,
+     /// The price records' `{u16 has ammo (+8), u16 max ammo (+0xe)}` by item (0x1c4530 + 0x18·id), from the engine.
+@@ -601,6 +604,7 @@ impl PageMenu {
+             help_items: pages::HelpItems::read(ov),
+             movie_lists: pages::read_movie_lists(ov),
+             log_ids: crate::help::read_log_ids(ov),
++            gms_in_log: false,
+             lang: 0,
+             ammo_records: Vec::new(),
+             gold_spin: None,
+@@ -1309,7 +1313,11 @@ impl PageMenu {
+             Some(Data::List(l)) => Some((l.cursor, l.items.get(l.cursor.max(0) as usize).map_or(0, |it| it.label))),
+             _ => None,
+         };
+-        let log_msg = focus_log.and_then(|(_, t)| self.log_ids.iter().find(|e| e.1 == t).map(|e| e.0 as u16 as u32));
++        let log_msg = focus_log.and_then(|(_, t)| {
++            // The port's entry: its note, a port text id ([`port::text::GMS_HELP`]).
++            if t == port::text::GMS_TITLE as i16 { return Some(port::text::GMS_HELP as u32); }
++            self.log_ids.iter().find(|e| e.1 == t).map(|e| e.0 as u16 as u32)
++        });
+         let tables = self.label_tables.clone();
+         let Some(wd) = self.wm(w) else { return 1 };
+         let [_, _, ww, wh] = wd.rect;
+diff --git a/crates/rc-game/src/menus/pause/pages.rs b/crates/rc-game/src/menus/pause/pages.rs
+index 8f2a442..165ca45 100644
+--- a/crates/rc-game/src/menus/pause/pages.rs
++++ b/crates/rc-game/src/menus/pause/pages.rs
+@@ -539,6 +539,8 @@ pub fn log_list_enter(m: &mut PageMenu, w: u32, gs: &GameState, log_ids: &[(i16,
+     let Some(Data::List(l)) = m.widgets.get_mut(&w).map(|x| &mut x.data) else { return };
+     l.items = (0..n).map(|k| Item { label: log_ids.get(gs.global.help_log[n - 1 - k] as usize).map_or(0, |e| e.1), action: 1, ..Item::default() }).collect();
+     l.items.retain(|it| it.label != 0);
++    // Port-only: the Gadgetron Movement System note, last (the oldest), never in the saved log.
++    if m.gms_in_log { l.items.push(Item { label: super::port::text::GMS_TITLE as i16, action: 1, ..Item::default() }); }
+ }
+ 
+ /// `fun_0021d1f8` (0x290c00): hidden (draw flags |= 4) while `all_text` streams (+0x50 = 1).
+diff --git a/crates/rc-game/src/menus/pause/port.rs b/crates/rc-game/src/menus/pause/port.rs
+index 60d5273..e5d99b7 100644
+--- a/crates/rc-game/src/menus/pause/port.rs
++++ b/crates/rc-game/src/menus/pause/port.rs
+@@ -146,14 +146,26 @@ pub mod text {
+     pub const AVAILABLE: i32 = -0x1c4;
+     pub const LOCKED: i32 = -0x1c5;
+     pub const GMS_OFF: i32 = -0x1c6;
++    /// The Gadgetron Movement System's HelpDesk note (rc-engine's gms), also its Help Log entry's text.
++    pub const GMS_HELP: i32 = -0x1c7;
+     pub const BUTTON_ICONS: i32 = -0x1d0;
+     pub const PS5: i32 = -0x1d1;
+     pub const XBOX_ONE: i32 = -0x1d2;
+     pub const AUTO: i32 = -0x1d3;
++    pub const LIGHTBAR: i32 = -0x1e0;
++    pub const LIGHTBAR_DEFAULT: i32 = -0x1e1;
++    pub const ORANGE: i32 = -0x1e2;
++    pub const GREEN: i32 = -0x1e3;
++    pub const BLUE: i32 = -0x1e4;
++    pub const HEALTH: i32 = -0x1e5;
+     /// The game's own "on" / "off" (20314 / 20315, the Subtitles / HelpDesk toggle values).
+     pub const ON: i32 = 20314;
+     pub const OFF: i32 = 20315;
+ 
++    /// The Gadgetron Movement System note (roxas997's words, from the ReRAC Discord).
++    pub const GMS_HELP_TEXT: &[u8] = b"The Gadgetron Movement System is what is used to move Ratchet and Clank on their intergalactic adventure. \
++If you like, you may change your options on the Port Options screen, under Controller.";
++
+     pub fn get(id: i32) -> Option<&'static [u8]> {
+         Some(match id {
+             ENTRY | TITLE => b"Port Options",
+@@ -204,10 +216,17 @@ pub mod text {
+             AVAILABLE => b"Available",
+             LOCKED => b"Locked",
+             GMS_OFF => b"Off",
++            GMS_HELP => GMS_HELP_TEXT,
+             BUTTON_ICONS => b"Button icons",
+             PS5 => b"PS5",
+             XBOX_ONE => b"Xbox One",
+             AUTO => b"Auto",
++            LIGHTBAR => b"Lightbar",
++            LIGHTBAR_DEFAULT => b"Default",
++            ORANGE => b"Orange",
++            GREEN => b"Green",
++            BLUE => b"Blue",
++            HEALTH => b"Health",
+             _ => return None,
+         })
+     }
+@@ -250,6 +269,9 @@ pub enum Setting {
+     /// The button icons in text (the engine's): value 0 Original (the disc's), 1 PS5, 2 Xbox One, 3 Auto (the
+     /// controller last used).
+     ButtonIcons,
++    /// The DualSense lightbar (the engine's): value 0 Default (the pad's own), 1 off, 2 Orange, 3 Green, 4 Blue, 5
++    /// Health.
++    Lightbar,
+ }
+ 
+ /// One row: the setting, its label and the ids of its values (✕ cycles through them).
+@@ -278,6 +300,7 @@ pub const ENTRIES: &[Entry] = &[
+     Entry { setting: Setting::FireButton, label: text::FIRE_BUTTON, values: &[text::CIRCLE, text::R2] },
+     Entry { setting: Setting::TriggerEffects, label: text::TRIGGER_EFFECTS, values: &[text::ON, text::OFF] },
+     Entry { setting: Setting::ButtonIcons, label: text::BUTTON_ICONS, values: &[text::ORIGINAL, text::PS5, text::XBOX_ONE, text::AUTO] },
++    Entry { setting: Setting::Lightbar, label: text::LIGHTBAR, values: &[text::LIGHTBAR_DEFAULT, text::OFF, text::ORANGE, text::GREEN, text::BLUE, text::HEALTH] },
+ ];
+ 
+ /// The Port Options page shows [`ENTRIES`]`[..PORT_ROWS]` (the last one the Controller row); the Controller page the
+@@ -625,7 +648,7 @@ mod tests {
+         // Port Options ends with the Controller row (no value: it opens a page); the controller settings follow.
+         assert_eq!((ENTRIES[PORT_ROWS - 1].setting, ENTRIES[PORT_ROWS - 1].values.len()), (Setting::Controller, 0));
+         let gms: Vec<Setting> = ENTRIES[PORT_ROWS..].iter().map(|e| e.setting).collect();
+-        assert_eq!(gms, vec![Setting::Vibration, Setting::VibrationStrength, Setting::FireButton, Setting::TriggerEffects, Setting::ButtonIcons]);
++        assert_eq!(gms, vec![Setting::Vibration, Setting::VibrationStrength, Setting::FireButton, Setting::TriggerEffects, Setting::ButtonIcons, Setting::Lightbar]);
+     }
+ 
+     #[test]
+diff --git a/crates/rc-game/src/menus/pause/tests.rs b/crates/rc-game/src/menus/pause/tests.rs
+index 7adaf23..f92bc92 100644
+--- a/crates/rc-game/src/menus/pause/tests.rs
++++ b/crates/rc-game/src/menus/pause/tests.rs
+@@ -65,6 +65,7 @@ fn menu() -> PageMenu {
+         help_items: Default::default(),
+         movie_lists: Vec::new(),
+         log_ids: Vec::new(),
++        gms_in_log: false,
+         lang: 0,
+         ammo_records: Vec::new(),
+         gold_spin: None,
+@@ -553,4 +554,17 @@ fn port_page_from_the_disc() {
+     assert_eq!(m.target, port::OPTIONS);
+ }
+ 
+-
++#[test]
++fn help_log_lists_the_gms_note_outside_the_save() {
++    let mut m = menu();
++    let w = 0x5f00_0000;
++    m.widgets.insert(w, list(w, 0, Vec::new(), 0, 0, 0, 0));
++    let g = gs();
++    super::pages::log_list_enter(&mut m, w, &g, &[]);
++    assert!(list_of(&m, w).items.is_empty());
++    // Once the note has shown: listed last (the oldest), the saved log untouched.
++    m.gms_in_log = true;
++    super::pages::log_list_enter(&mut m, w, &g, &[]);
++    assert_eq!(list_of(&m, w).items.iter().map(|i| (i.label, i.action)).collect::<Vec<_>>(), vec![(super::port::text::GMS_TITLE as i16, 1)]);
++    assert_eq!((g.global.help_log_pos, g.global.help_log[0]), (0, 0));
++}
+diff --git a/docs/plan/menus.md b/docs/plan/menus.md
+index cee5134..f0ea76d 100644
+--- a/docs/plan/menus.md
++++ b/docs/plan/menus.md
+@@ -574,8 +574,14 @@ sub-pages (`crates/rc-game/src/menus/pause/port.rs`, `PageMenu::install_port_pag
+   cycle; ✕ opens its own page (`port::GMS_PAGE`, from the main menu `port::GMS_PAGE_FRONT`; Port Options' frames, parent
+   Port Options) titled "Gadgetron Movement System" (regular font: in the large one the title wraps and the label turns
+   into a scroller) listing the connected controllers (`port::GmsList`, filled by the engine's `gms::Gms` before each tick):
+-  Active (the one last used) / Available, or with one locked by ✕: Locked / Off. On Veldin a text-only HelpDesk note
+-  (`gms::HELP_TEXT`, no voice, no help record: `help::Help::request_port`) says what the GMS is, once.
++  Active (the one last used) / Available, or with one locked by ✕: Locked / Off. In a new game's Veldin (level 0
++  loaded with under `gms::NEW_GAME_PLAY_TIME` played) a text-only HelpDesk note (`port::text::GMS_HELP_TEXT`, no voice,
++  no help record: `help::Help::request_port`) says what the GMS is. Once it has shown, the Help Log lists it last
++  (`PageMenu::gms_in_log`; settings key `gms_help`), outside the saved log, so saves stay the game's.
++* **Lightbar** (Controller page, port-only): Default (the pad's own: nothing sent) / Off / Orange / Green / Blue /
++  Health (green to red with Ratchet's health over `max_hp`) → `haptics::ControllerSettings::lightbar` (key
++  `lightbar`), sent by `dualsense` with valid flag 1 0x04 and, once, the lightbar setup that ends the pad's own
++  animation. Pads are read, and rumble and R2's effect sent, only while the game's window has the focus.
+ * **Device support**: the row offers only the sample counts the GPU can use for every multisampled world attachment
+   (`render_settings::SupportedMsaa`, detected at start from `RenderAdapter::get_texture_format_features` for
+   `Rgba8UnormSrgb` and `Depth32Float` — the WebGPU guarantee {1, 4} when the device lacks
 -- 
 2.46.2.windows.1
 

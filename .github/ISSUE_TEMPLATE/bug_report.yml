@@ -1,0 +1,79 @@
+name: Bug report
+description: Something in DualSense for ReRAC doesn't work as it should
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for testing! The more exact the steps, the faster it gets fixed. One bug per report, please.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What went wrong, as exactly as you can. Screenshots or a short video help a lot.
+      placeholder: "The Gadgetron Movement System note showed once, but not after I loaded my save on Veldin."
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to get it
+      description: From starting the game, what you did, in order.
+      placeholder: |
+        1. Started a new game
+        2. Waited on Veldin for the HelpDesk message
+        3. Quit and loaded the save
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected instead
+    validations:
+      required: true
+  - type: dropdown
+    id: connection
+    attributes:
+      label: How the controller is connected
+      options:
+        - Bluetooth
+        - USB cable
+        - Not using a DualSense (other pad or keyboard)
+    validations:
+      required: true
+  - type: dropdown
+    id: tools
+    attributes:
+      label: Other controller tools running
+      multiple: true
+      options:
+        - None
+        - Steam (with Steam Input)
+        - DualSenseX / DSX
+        - DS4Windows
+        - Other (say which below)
+  - type: input
+    id: version
+    attributes:
+      label: DualSense for ReRAC version
+      description: The zip's name, e.g. ReRAC-DualSense-1.1.1.
+      placeholder: "1.1.1"
+    validations:
+      required: true
+  - type: input
+    id: folder
+    attributes:
+      label: Your ReRAC folder
+      description: Where your rerac.exe is, if it's not the launcher's usual folder.
+      placeholder: "D:\\Games\\ReRAC 0.3.6"
+  - type: textarea
+    id: settings
+    attributes:
+      label: Your Controller page settings
+      description: Vibration, Vibration strength, Fire button, Trigger effects, Button icons, Lightbar.
+      placeholder: "Vibration on, Medium, R2, Trigger effects on, PS5 icons, Lightbar Health"
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else
+      description: The weapon, level or menu it happened in, how often it happens, anything else that might matter.

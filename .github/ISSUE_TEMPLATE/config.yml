@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: ReRAC itself (not the DualSense part)
+    url: https://github.com/re-rac/rerac/issues
+    about: Problems with the game port in general go to the ReRAC project.

@@ -33,6 +33,8 @@ The trigger goes slack with the wrench, with gadgets, when a weapon is out of am
   controller (keyboard, DualSense, other pads), shows which one is active, and can lock the game to one of them.
 - **Button icons** (new in 1.1.0): the game's on-screen button prompts as the PS2's, a PS5's or an Xbox One's, or
   Auto (follows the controller you last used). The PS5 and Xbox icons are drawn sharp at your screen's resolution.
+- **Lightbar** (new in 1.1.1): leave it to the controller, turn it off, pick orange, green or blue, or let it follow
+  Ratchet's health from green to red.
 
 ## Settings
 
@@ -46,6 +48,7 @@ ReRAC's other settings.
 | Fire button | Circle (the game's default) / R2 |
 | Trigger effects | On / Off (needs Fire button: R2) |
 | Button icons | Original / PS5 / Xbox One / Auto |
+| Lightbar | Default (the controller's own) / Off / Orange / Green / Blue / Health |
 
 Below the settings, the page lists the connected controllers as **Active** (last used) or **Available**. Press ✕ on
 one to lock the game to it, and again to unlock.
@@ -53,6 +56,11 @@ one to lock the game to it, and again to unlock.
 ![The Controller page (Gadgetron Movement System) in the pause menu](screenshots/controller-page.png)
 
 ![Port Options with the Controller entry](screenshots/port-options.png)
+
+In a new game, the HelpDesk explains the Gadgetron Movement System on Veldin. After that, the note stays in
+**Help → Help Log**.
+
+![The Gadgetron Movement System note in the Help Log](screenshots/help-log.png)
 
 **Button icons:** PS5 and Xbox One
 
@@ -64,25 +72,31 @@ one to lock the game to it, and again to unlock.
 
 Needs **ReRAC 0.3.6** installed by the [ReRAC Launcher](https://github.com/re-rac/rerac-launcher), on Windows x64.
 
-1. Download `ReRAC-DualSense-1.1.0.zip` from [Releases](https://github.com/thrivetoday/dualsense-for-rerac/releases/latest).
-2. Close ReRAC, unzip, and run `install.bat`.
+1. Download `ReRAC-DualSense-1.1.1.zip` from [Releases](https://github.com/thrivetoday/dualsense-for-rerac/releases/latest).
+2. Close ReRAC, unzip, and run `install.bat`. If ReRAC isn't in the launcher's usual folder, it asks you to pick the
+   folder with your `rerac.exe` (or drag your `rerac.exe` onto `install.bat`).
 3. Start ReRAC from the launcher as usual.
 
 ReRAC has no mod loader yet, so this ships as a replacement `rerac.exe`: the official 0.3.6 with the DualSense code
-built in. `install.bat` copies it into `%LOCALAPPDATA%\rerac\versions\official\v0.3.6-alpha\` and keeps the original
-as `rerac.exe.original`. Nothing else in your install changes.
+built in. `install.bat` copies it into your ReRAC 0.3.6 folder (by default
+`%LOCALAPPDATA%\rerac\versions\official\v0.3.6-alpha\`), keeps the original as `rerac.exe.original`, and remembers
+the folder for updates and `uninstall.bat`. Nothing else in your install changes.
 
 **Uninstall:** run `uninstall.bat`, or reinstall 0.3.6 from the launcher. A newer official ReRAC version installs
 into its own folder and won't include this until this project is updated for it.
 
 ## Good to know
 
-- Over Bluetooth, the first rumble or trigger effect switches the controller into the extended mode Steam uses.
-  Other games that read it through Windows may not see it until you turn the controller off and on (hold PS for
+- Over Bluetooth, the first rumble, trigger effect or lightbar colour switches the controller into the extended mode
+  Steam uses. Other games that read it through Windows may not see it until you turn the controller off and on (hold PS for
   10 seconds, then press PS).
 - It uses the DualSense's standard rumble motors. The finer "HD haptics" only work over USB through the controller's
   audio channel, so they are not used.
+- The controller only works while the game's window is focused, like other controllers.
+- After setting the lightbar back to Default, the controller keeps the last colour until you turn it off and on.
 - This is for the official ReRAC 0.3.6, not for other ReRAC mods such as Weapon Evolution.
+- Found a bug or have an idea? [Open an issue](https://github.com/thrivetoday/dualsense-for-rerac/issues/new/choose):
+  the form asks for what's needed to fix it.
 
 ## How it works
 

@@ -1,0 +1,24 @@
+name: Idea or suggestion
+description: Something you'd like DualSense for ReRAC to do
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: The idea
+      description: What it should do, and when in the game you'd feel or see it.
+      placeholder: "A long fading rumble when Ratchet dies, like a heart monitor flatlining."
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it would be good
+  - type: dropdown
+    id: connection
+    attributes:
+      label: How you connect your controller
+      options:
+        - Bluetooth
+        - USB cable
+        - Both
