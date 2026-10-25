@@ -72,9 +72,10 @@ In a new game, the HelpDesk explains the Gadgetron Movement System on Veldin. Af
 
 Needs **ReRAC 0.3.6** installed by the [ReRAC Launcher](https://github.com/re-rac/rerac-launcher), on Windows x64.
 
-1. Download `ReRAC-DualSense-1.1.1.zip` from [Releases](https://github.com/thrivetoday/dualsense-for-rerac/releases/latest).
-2. Close ReRAC, unzip, and run `install.bat`. If ReRAC isn't in the launcher's usual folder, it asks you to pick the
-   folder with your `rerac.exe` (or drag your `rerac.exe` onto `install.bat`).
+1. Download `ReRAC-DualSense-1.1.2.zip` from [Releases](https://github.com/thrivetoday/dualsense-for-rerac/releases/latest).
+2. Close ReRAC, unzip, and run `install.bat`. It finds the game where the ReRAC Launcher put it (it reads the
+   launcher's settings). If it can't, a Windows file window opens: select your `rerac.exe`. You can also drop your
+   `rerac.exe`, your ReRAC folder or the ReRAC Launcher onto `install.bat`.
 3. Start ReRAC from the launcher as usual.
 
 ReRAC has no mod loader yet, so this ships as a replacement `rerac.exe`: the official 0.3.6 with the DualSense code
