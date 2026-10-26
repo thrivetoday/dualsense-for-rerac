@@ -70,20 +70,22 @@ In a new game, the HelpDesk explains the Gadgetron Movement System on Veldin. Af
 
 ## Install
 
-Needs **ReRAC 0.3.6** installed by the [ReRAC Launcher](https://github.com/re-rac/rerac-launcher), on Windows x64.
+Needs **ReRAC 0.3.7** installed by the [ReRAC Launcher](https://github.com/re-rac/rerac-launcher), on Windows x64.
+Still on ReRAC 0.3.6? Use [DualSense 1.1.2](https://github.com/thrivetoday/dualsense-for-rerac/releases/tag/v1.1.2)
+instead: each DualSense zip is built for one ReRAC version, and its installer checks.
 
-1. Download `ReRAC-DualSense-1.1.2.zip` from [Releases](https://github.com/thrivetoday/dualsense-for-rerac/releases/latest).
+1. Download `ReRAC-DualSense-1.2.0.zip` from [Releases](https://github.com/thrivetoday/dualsense-for-rerac/releases/latest).
 2. Close ReRAC, unzip, and run `install.bat`. It finds the game where the ReRAC Launcher put it (it reads the
    launcher's settings). If it can't, a Windows file window opens: select your `rerac.exe`. You can also drop your
    `rerac.exe`, your ReRAC folder or the ReRAC Launcher onto `install.bat`.
 3. Start ReRAC from the launcher as usual.
 
-ReRAC has no mod loader yet, so this ships as a replacement `rerac.exe`: the official 0.3.6 with the DualSense code
-built in. `install.bat` copies it into your ReRAC 0.3.6 folder (by default
-`%LOCALAPPDATA%\rerac\versions\official\v0.3.6-alpha\`), keeps the original as `rerac.exe.original`, and remembers
+ReRAC has no mod loader yet, so this ships as a replacement `rerac.exe`: the official 0.3.7 with the DualSense code
+built in. `install.bat` copies it into your ReRAC 0.3.7 folder (by default
+`%LOCALAPPDATA%\rerac\versions\official\v0.3.7-alpha\`), keeps the original as `rerac.exe.original`, and remembers
 the folder for updates and `uninstall.bat`. Nothing else in your install changes.
 
-**Uninstall:** run `uninstall.bat`, or reinstall 0.3.6 from the launcher. A newer official ReRAC version installs
+**Uninstall:** run `uninstall.bat`, or reinstall 0.3.7 from the launcher. A newer official ReRAC version installs
 into its own folder and won't include this until this project is updated for it.
 
 ## Good to know
@@ -95,14 +97,14 @@ into its own folder and won't include this until this project is updated for it.
   audio channel, so they are not used.
 - The controller only works while the game's window is focused, like other controllers.
 - After setting the lightbar back to Default, the controller keeps the last colour until you turn it off and on.
-- This is for the official ReRAC 0.3.6, not for other ReRAC mods such as Weapon Evolution.
+- This is for the official ReRAC 0.3.7, not for other ReRAC mods such as Weapon Evolution.
 - Found a bug or have an idea? [Open an issue](https://github.com/thrivetoday/dualsense-for-rerac/issues/new/choose):
   the form asks for what's needed to fix it.
 
 ## How it works
 
-The change is in [`patch/dualsense-haptics.patch`](patch/dualsense-haptics.patch), against ReRAC v0.3.6 (commit
-`89c87e9`). The same code is on the [`dualsense-haptics` branch](https://github.com/thrivetoday/rerac/tree/dualsense-haptics)
+The change is in [`patch/dualsense-haptics.patch`](patch/dualsense-haptics.patch), against ReRAC v0.3.7 (commit
+`f2dfbb8`). The same changes for v0.3.6 are on the [`dualsense-haptics` branch](https://github.com/thrivetoday/rerac/tree/dualsense-haptics)
 of a ReRAC fork.
 
 - `dualsense.rs` reads the controller's HID reports (USB, Bluetooth simple and extended) through `hid.dll` and
@@ -114,7 +116,7 @@ of a ReRAC fork.
 - `button_icons.rs` redraws the icon cells in the game's font texture, and for PS5 / Xbox draws each icon as a sharp
   image over the game's 512×416 2D layer.
 
-To build it yourself, check out ReRAC at v0.3.6, run `git am patch/dualsense-haptics.patch`, and follow ReRAC's
+To build it yourself, check out ReRAC at v0.3.7, run `git am patch/dualsense-haptics.patch`, and follow ReRAC's
 README.
 
 ## Credits
