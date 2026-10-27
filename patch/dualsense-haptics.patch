@@ -1,7 +1,7 @@
 From 59d883e5d73d00b87dada028cabdadb9f5f190d6 Mon Sep 17 00:00:00 2001
 From: thrivetoday <289389247+thrivetoday@users.noreply.github.com>
 Date: Thu, 22 Oct 2026 00:36:18 +0200
-Subject: [PATCH 1/7] DualSense support: native HID input, rumble from game
+Subject: [PATCH 1/8] DualSense support: native HID input, rumble from game
  events, R2 as fire and per-weapon adaptive triggers
 
 A Bluetooth DualSense that Steam or a remapper has switched to its extended report (0x31) gave no input through
@@ -1575,7 +1575,7 @@ index 594f8e5..99b1dce 100644
 From cdedd6da8070667c677b5f453a62ae7f02777692 Mon Sep 17 00:00:00 2001
 From: thrivetoday <289389247+thrivetoday@users.noreply.github.com>
 Date: Thu, 22 Oct 2026 02:19:16 +0200
-Subject: [PATCH 2/7] Gadgetron Movement System: Port Options "Controller" page
+Subject: [PATCH 2/8] Gadgetron Movement System: Port Options "Controller" page
  listing the controllers, a controller lock, and a Veldin HelpDesk note
 
 Idea by roxas997 on the ReRAC Discord: the controllers under the game's own lore name.
@@ -2546,7 +2546,7 @@ index 99b1dce..af5a147 100644
 From da69e7c8ef48b8b09d547d030eddc1b87db1365d Mon Sep 17 00:00:00 2001
 From: thrivetoday <289389247+thrivetoday@users.noreply.github.com>
 Date: Thu, 22 Oct 2026 10:55:50 +0200
-Subject: [PATCH 3/7] Controller page holds the controller settings; port pages
+Subject: [PATCH 3/8] Controller page holds the controller settings; port pages
  keep their frames and, in the pause menu, centre the title and stretch the
  list
 
@@ -3068,7 +3068,7 @@ index 67d4674..935e957 100644
 From 79f228c84fc11a3830fd6425409497f106bf4075 Mon Sep 17 00:00:00 2001
 From: thrivetoday <289389247+thrivetoday@users.noreply.github.com>
 Date: Thu, 22 Oct 2026 11:30:13 +0200
-Subject: [PATCH 4/7] Button icons: the text's pad icons as the PS2's, a PS5's
+Subject: [PATCH 4/8] Button icons: the text's pad icons as the PS2's, a PS5's
  or an Xbox One's, or Auto by the controller last used
 
 - Controller page row "Button icons" (Original / PS5 / Xbox One / Auto), saved as button_icons.
@@ -3630,7 +3630,7 @@ index af5a147..0cfae23 100644
 From 425e9e86e5b9b0e185874883127f64a66915ea4f Mon Sep 17 00:00:00 2001
 From: thrivetoday <289389247+thrivetoday@users.noreply.github.com>
 Date: Thu, 22 Oct 2026 12:13:02 +0200
-Subject: [PATCH 5/7] Sharp button icons: PS5 and Xbox icons drawn at the
+Subject: [PATCH 5/8] Sharp button icons: PS5 and Xbox icons drawn at the
  window's resolution
 
 With the PS5 or Xbox One style, the pad icons in the HUD's and page menus'
@@ -5265,7 +5265,7 @@ index 9afe0c6..05cc181 100644
 From 4180f6eea59c08acf762a2aafcf4fd7885e11c56 Mon Sep 17 00:00:00 2001
 From: thrivetoday <289389247+thrivetoday@users.noreply.github.com>
 Date: Thu, 22 Oct 2026 12:45:30 +0200
-Subject: [PATCH 6/7] Button icon art: out of the shipped assets folder
+Subject: [PATCH 6/8] Button icon art: out of the shipped assets folder
 
 The PNGs are compiled into the executable (include_bytes!), so they live in
 crates/rc-engine/art/ instead of crates/rc-engine/assets/, which the package
@@ -5457,7 +5457,7 @@ index 05cc181..cee5134 100644
 From 896bd630972708928f65b08ee4ebcf6dfa0e87c1 Mon Sep 17 00:00:00 2001
 From: thrivetoday <289389247+thrivetoday@users.noreply.github.com>
 Date: Sat, 24 Oct 2026 20:06:04 +0200
-Subject: [PATCH 7/7] DualSense 1.1.1: focus, GMS note per new game and in the
+Subject: [PATCH 7/8] DualSense 1.1.1: focus, GMS note per new game and in the
  Help Log, Lightbar setting
 
 Fixes from the ReRAC Discord's testing:
@@ -6166,6 +6166,134 @@ index cee5134..f0ea76d 100644
 +  Health (green to red with Ratchet's health over `max_hp`) → `haptics::ControllerSettings::lightbar` (key
 +  `lightbar`), sent by `dualsense` with valid flag 1 0x04 and, once, the lightbar setup that ends the pad's own
 +  animation. Pads are read, and rumble and R2's effect sent, only while the game's window has the focus.
+ * **Device support**: the row offers only the sample counts the GPU can use for every multisampled world attachment
+   (`render_settings::SupportedMsaa`, detected at start from `RenderAdapter::get_texture_format_features` for
+   `Rgba8UnormSrgb` and `Depth32Float` — the WebGPU guarantee {1, 4} when the device lacks
+-- 
+2.46.2.windows.1
+
+
+From c5acd32729a5c3626dc95b1f63b594feef45c1f7 Mon Sep 17 00:00:00 2001
+From: thrivetoday <289389247+thrivetoday@users.noreply.github.com>
+Date: Tue, 27 Oct 2026 21:33:33 +0100
+Subject: [PATCH 8/8] Fire button R2: R2 stays R2 on the hoverboard
+
+With "Fire button: R2", R2 read as the game's fire (circle) everywhere, so on the
+hoverboard the fourth trick (R2, hoverboard::tricks) could not be done: a ReRAC
+Discord player had to switch back to Circle for races. While Ratchet is in the
+hoverboard's movement group (hoverboard::GROUP, 0x16) R2 now reaches the game as R2
+(haptics::R2Raw, input_map::PadDevice::fire_button) and the trigger has no
+weapon feel.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ crates/rc-engine/src/haptics.rs   | 13 +++++++++++--
+ crates/rc-engine/src/input_map.rs | 15 ++++++++++++++-
+ docs/plan/menus.md                |  2 ++
+ 3 files changed, 27 insertions(+), 3 deletions(-)
+
+diff --git a/crates/rc-engine/src/haptics.rs b/crates/rc-engine/src/haptics.rs
+index 4a7d607..df79184 100644
+--- a/crates/rc-engine/src/haptics.rs
++++ b/crates/rc-engine/src/haptics.rs
+@@ -285,6 +285,11 @@ fn motor(v: f32, scale: f32) -> u8 { (v.clamp(0.0, 1.0) * scale * 255.0).round()
+ #[derive(Resource, Clone, Copy, Debug, Default, PartialEq)]
+ pub struct FirePoint(pub f32);
+ 
++/// R2 stays R2 even with "Fire button: R2" (crate::input_map::Pads): on the hoverboard (hero movement group 0x16,
++/// states 0x6b..0x6f) R2 is the fourth trick (`hero::hoverboard` `tricks`), not a weapon's fire.
++#[derive(Resource, Clone, Copy, Debug, Default, PartialEq, Eq)]
++pub struct R2Raw(pub bool);
++
+ /// The fire point of an effect: past a weapon effect's snap, a little into a resistance, well after a vibration starts
+ /// ([`VIBRATION_LEAD`]: the trigger's motor needs a moment to build up, and a shot right at its start came first).
+ pub fn fire_point(t: Trigger) -> f32 {
+@@ -377,6 +382,7 @@ fn haptics_frame(
+     gs: Option<Res<Persistent>>,
+     mode: Option<Res<crate::menu_render::MenuMode>>,
+     mut fire: ResMut<FirePoint>,
++    mut raw: ResMut<R2Raw>,
+     windows: Query<&Window, With<bevy::window::PrimaryWindow>>,
+ ) {
+     let Some(pad) = pad else { return };
+@@ -420,7 +426,10 @@ fn haptics_frame(
+         (h.counter, h.last) = (Some(game.counter), now);
+         long_shake = game.camera.shake.iter().map(long_shake_level).fold(0.0, f32::max);
+         // R2's feel: the weapon in hand (not the wrench), while it has ammo (or uses none).
+-        let feel = global.filter(|_| settings.fire_r2 && settings.triggers).and_then(|g| {
++        // On the hoverboard R2 is a trick: no weapon feel (and R2 is not read as fire, [`R2Raw`]).
++        let board = game.hero.group == rc_game::hero::hoverboard::GROUP;
++        if raw.0 != board { raw.0 = board; }
++        let feel = global.filter(|_| settings.fire_r2 && settings.triggers && !board).and_then(|g| {
+             let ammo = usize::try_from(item).ok().and_then(|i| g.ammo.get(i)).copied().unwrap_or(0);
+             (ammo > 0 || NO_AMMO.contains(&item)).then(|| weapon_feel(item)).flatten()
+         });
+@@ -482,7 +491,7 @@ impl Plugin for HapticsPlugin {
+             if s.triggers { "on" } else { "off" }
+         );
+         println!("haptics: lightbar {:?}", s.lightbar);
+-        app.insert_resource(s).init_resource::<FirePoint>().add_systems(PostUpdate, haptics_frame);
++        app.insert_resource(s).init_resource::<FirePoint>().init_resource::<R2Raw>().add_systems(PostUpdate, haptics_frame);
+     }
+ }
+ 
+diff --git a/crates/rc-engine/src/input_map.rs b/crates/rc-engine/src/input_map.rs
+index 8fdde90..c541886 100644
+--- a/crates/rc-engine/src/input_map.rs
++++ b/crates/rc-engine/src/input_map.rs
+@@ -87,6 +87,12 @@ impl PadDevice {
+         PadDevice { left: g.left_stick(), right: g.right_stick(), buttons, r2 }
+     }
+ 
++    /// The fire button setting applied: with `fire_r2` R2 fires ([`PadDevice::fire_on_r2`]), unless `r2_raw` (the
++    /// hoverboard, where R2 is a trick: crate::haptics::R2Raw).
++    pub fn fire_button(self, fire_r2: bool, r2_raw: bool, point: f32) -> PadDevice {
++        if fire_r2 && !r2_raw { self.fire_on_r2(point) } else { self }
++    }
++
+     /// R2 as the fire button: R2 reads as ○ (the game's fire), so it no longer crouches; R1 still does (the game reads
+     /// R1 and R2 as one crouch button, `held & (R1 | R2)`). It fires once R2 is pulled to `point` (0..1: where the held
+     /// weapon's trigger effect clicks or resists, crate::haptics::FirePoint), so the shot follows the feel; a pad
+@@ -116,6 +122,8 @@ pub struct Pads<'w, 's> {
+     dualsense: Option<Res<'w, crate::dualsense::DualSense>>,
+     controller: Option<Res<'w, crate::haptics::ControllerSettings>>,
+     fire_point: Option<Res<'w, crate::haptics::FirePoint>>,
++    /// R2 kept as R2 (the hoverboard's trick), whatever the fire button.
++    r2_raw: Option<Res<'w, crate::haptics::R2Raw>>,
+     /// The Gadgetron Movement System's lock (crate::gms): only the locked device counts.
+     gms: Option<Res<'w, crate::gms::Gms>>,
+     /// The game's window: pads are read only while it has the focus (the DualSense's own reports arrive regardless,
+@@ -129,7 +137,8 @@ impl Pads<'_, '_> {
+         if !self.focused() { return None; }
+         let pad = self.merged()?;
+         let point = self.fire_point.as_ref().map_or(0.0, |p| p.0);
+-        Some(if self.controller.as_ref().is_some_and(|c| c.fire_r2) { pad.fire_on_r2(point) } else { pad })
++        let fire_r2 = self.controller.as_ref().is_some_and(|c| c.fire_r2);
++        Some(pad.fire_button(fire_r2, self.r2_raw.as_ref().is_some_and(|r| r.0), point))
+     }
+ 
+     /// The game's window has the focus (or there is none).
+@@ -343,6 +352,10 @@ mod tests {
+         assert_eq!(pad(button::R2, 0.85).fire_on_r2(0.8).buttons, button::CIRCLE);
+         assert_eq!(pad(button::R2, 0.1).fire_on_r2(0.0).buttons, 0);
+         assert_eq!(pad(button::R2, 0.2).fire_on_r2(0.0).buttons, button::CIRCLE);
++        // On the hoverboard R2 stays R2 (a trick), with R2 as fire or not.
++        assert_eq!(pad(button::R2, 1.0).fire_button(true, true, 0.0).buttons, button::R2);
++        assert_eq!(pad(button::R2, 1.0).fire_button(true, false, 0.0).buttons, button::CIRCLE);
++        assert_eq!(pad(button::R2, 1.0).fire_button(false, false, 0.0).buttons, button::R2);
+     }
+ 
+     #[test]
+diff --git a/docs/plan/menus.md b/docs/plan/menus.md
+index f0ea76d..4dd7bd5 100644
+--- a/docs/plan/menus.md
++++ b/docs/plan/menus.md
+@@ -582,6 +582,8 @@ sub-pages (`crates/rc-game/src/menus/pause/port.rs`, `PageMenu::install_port_pag
+   Health (green to red with Ratchet's health over `max_hp`) → `haptics::ControllerSettings::lightbar` (key
+   `lightbar`), sent by `dualsense` with valid flag 1 0x04 and, once, the lightbar setup that ends the pad's own
+   animation. Pads are read, and rumble and R2's effect sent, only while the game's window has the focus.
++* **Fire button R2 and the hoverboard**: on the hoverboard (hero movement group `hoverboard::GROUP`, 0x16) R2 stays R2,
++  the board's fourth trick, and has no weapon feel (`haptics::R2Raw`, `input_map::PadDevice::fire_button`).
  * **Device support**: the row offers only the sample counts the GPU can use for every multisampled world attachment
    (`render_settings::SupportedMsaa`, detected at start from `RenderAdapter::get_texture_format_features` for
    `Rgba8UnormSrgb` and `Depth32Float` — the WebGPU guarantee {1, 4} when the device lacks

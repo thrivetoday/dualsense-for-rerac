@@ -74,7 +74,7 @@ Needs **ReRAC 0.3.7** installed by the [ReRAC Launcher](https://github.com/re-ra
 Still on ReRAC 0.3.6? Use [DualSense 1.1.2](https://github.com/thrivetoday/dualsense-for-rerac/releases/tag/v1.1.2)
 instead: each DualSense zip is built for one ReRAC version, and its installer checks.
 
-1. Download `ReRAC-DualSense-1.2.0.zip` from [Releases](https://github.com/thrivetoday/dualsense-for-rerac/releases/latest).
+1. Download `ReRAC-DualSense-1.2.1.zip` from [Releases](https://github.com/thrivetoday/dualsense-for-rerac/releases/latest).
 2. Close ReRAC, unzip, and run `install.bat`. It finds the game where the ReRAC Launcher put it (it reads the
    launcher's settings). If it can't, a Windows file window opens: select your `rerac.exe`. You can also drop your
    `rerac.exe`, your ReRAC folder or the ReRAC Launcher onto `install.bat`.
